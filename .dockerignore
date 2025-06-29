@@ -1,0 +1,10 @@
+nginx/*
+!nginx/errors/
+
+ssl/
+
+.htpasswd
+
+prometheus/
+
+grafana/
