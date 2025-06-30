@@ -27,43 +27,11 @@ services:
       - .env
     ports:
       - "3000:3000"
-    command: sh -c "npm run build && node dist/index.js"
+    command: sh -c "npm run dev"
     restart: unless-stopped
     depends_on:
       database:
         condition: service_healthy
-    networks:
-      - localdev-network
-
-  frontend:
-    container_name: meraki-frontend
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
-    ports:
-      - "5173:5173"
-    restart: unless-stopped
-    depends_on:
-      backend:
-        condition: service_started
-    networks:
-      - localdev-network
-
-  contentmanager:
-    container_name: meraki-content-manager
-    build:
-      context: ./contentmanager
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    expose:
-      - "80"
-    restart: unless-stopped
-    depends_on:
-      backend:
-        condition: service_started
     networks:
       - localdev-network
 

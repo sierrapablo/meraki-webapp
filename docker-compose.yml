@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     image: postgres:latest
     env_file:
-      - .env      
+      - .env
     ports:
       - "5432:5432"
     volumes:
@@ -13,7 +13,7 @@ services:
     networks:
       - reverse-proxy
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,7 +22,7 @@ services:
     container_name: meraki-backend
     build:
       context: ./backend
-      dockerfile: Dockerfile 
+      dockerfile: Dockerfile
     env_file:
       - .env
     ports:
@@ -34,7 +34,7 @@ services:
         condition: service_healthy
     networks:
       - reverse-proxy
-  
+
   frontend:
     container_name: meraki-frontend
     build:
@@ -50,6 +50,22 @@ services:
         condition: service_started
     networks:
       - reverse-proxy
+
+  contentmanager:
+    container_name: meraki-content-manager
+    build:
+      context: ./contentmanager
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    expose:
+      - "80"
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - localdev-network
 
 networks:
   reverse-proxy:

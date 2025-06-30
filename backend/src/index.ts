@@ -2,16 +2,14 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-
-import messagesRoutes from './routes/messageRoutes';
-
+import postsRoutes from './routes/postsRoutes';
 
 dotenv.config();
+
 const app = express();
 
 const allowedOrigins = [
-  'https://sierrapablo.dev',
-  'https://www.sierrapablo.dev',
+  '*',
 ];
 
 app.use(
@@ -24,7 +22,7 @@ app.use(
 
 app.use(express.json());
 
-app.use('/messages', messagesRoutes);
+app.use('/posts', postsRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
