@@ -18,17 +18,6 @@ services:
       timeout: 5s
       retries: 5
 
-  bucket:
-    image: nginx:alpine
-    container_name: meraki-bucket
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-    volumes:
-      - ./filestorage/bucket:/usr/share/nginx/html:ro
-    networks:
-      - localdev-network
-
   backend:
     container_name: meraki-backend
     build:
@@ -43,8 +32,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-      bucket:
-        condition: service_started
     networks:
       - localdev-network
 
