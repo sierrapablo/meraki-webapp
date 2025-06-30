@@ -1,19 +1,17 @@
 INSERT INTO
-  posts (slug, title, author, summary, tags, filepath)
+  posts (slug, title, author, tags, content)
 VALUES
   (
     'first-post',
     'Primer post de prueba',
     'localdev',
-    'Este es un post de prueba para entorno local',
-    ARRAY ['test', 'localdev', 'primer-post'],
-    'http://localhost:8080/posts/lorem-ipsum/lorem-ipsum.md'
+    ARRAY ['test', 'primer-post'],
+    'Este es el contenido del primer post de prueba.'
   ) ON CONFLICT (slug) DO
 UPDATE
 SET
   title = EXCLUDED.title,
   author = EXCLUDED.author,
-  summary = EXCLUDED.summary,
   tags = EXCLUDED.tags,
-  filepath = EXCLUDED.filepath,
+  content = EXCLUDED.content,
   updated_at = NOW();
