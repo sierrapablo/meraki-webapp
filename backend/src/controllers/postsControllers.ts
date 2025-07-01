@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { pool } from '../db/pool';
+import { POSTS_QUERIES } from '../db/queries/postsQueries';
 
 
 /**
@@ -7,10 +8,7 @@ import { pool } from '../db/pool';
  */
 export const getAllPosts = async (_req: Request, res: Response): Promise<void> => {
     try {
-        const result = await pool.query(
-            `SELECT * FROM posts
-             ORDER BY created_at DESC`
-        );
+        const result = await pool.query(POSTS_QUERIES.GET_ALL);
         res.status(200).json(result.rows);
     } catch (error) {
         console.error('Error getting posts:', error);
@@ -33,9 +31,7 @@ export const createPost = async (req: Request, res: Response): Promise<void> => 
 
     try {
         const result = await pool.query(
-            `INSERT INTO posts (slug, title, author, tags, content)
-             VALUES ($1, $2, $3, $4, $5)
-             RETURNING *`,
+            POSTS_QUERIES.CREATE,
             [slug, title, author, tags || [], content]
         );
         res.status(201).json(result.rows[0]);
@@ -61,10 +57,7 @@ export const deletePost = async (req: Request, res: Response): Promise<void> => 
     }
 
     try {
-        const result = await pool.query(
-            `DELETE FROM posts WHERE slug = $1 RETURNING *`,
-            [slug]
-        );
+        const result = await pool.query(POSTS_QUERIES.DELETE_BY_SLUG, [slug]);
 
         if (result.rowCount === 0) {
             res.status(404).json({ message: 'Post not found' });
