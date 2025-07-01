@@ -7,6 +7,6 @@ CREATE TABLE IF NOT EXISTS posts (
   author TEXT NOT NULL,
   tags TEXT [],
   content TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
 );
