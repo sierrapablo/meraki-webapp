@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
+import { errorHandler } from './middlewares/errorHandler';
 import postsRoutes from './routes/postsRoutes';
 
 dotenv.config();
@@ -15,7 +16,7 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: '*',
-    methods: ['GET'],
+    methods: ['GET', 'POST', 'DELETE'],
     allowedHeaders: ['Content-Type'],
   })
 );
@@ -23,6 +24,8 @@ app.use(
 app.use(express.json());
 
 app.use('/posts', postsRoutes);
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -1,5 +1,6 @@
 import { pool } from "../db/pool";
 import { POSTS_QUERIES } from "../db/queries/postsQueries";
+import { AppError } from "../utils/AppError";
 
 export interface Post {
     slug: string;
@@ -16,8 +17,12 @@ export interface Post {
  * @returns {Promise<Post[]>} A promise that resolves to an array of posts.
  */
 export const getAllPosts = async (): Promise<Post[]> => {
-    const result = await pool.query(POSTS_QUERIES.GET_ALL);
-    return result.rows;
+    try {
+        const result = await pool.query(POSTS_QUERIES.GET_ALL);
+        return result.rows;
+    } catch (error) {
+        throw new AppError("Failed to retrieve posts", 500);
+    }
 };
 
 /**
@@ -27,11 +32,18 @@ export const getAllPosts = async (): Promise<Post[]> => {
  */
 export const createPost = async (post: Post): Promise<Post> => {
     const { slug, title, author, tags, content } = post;
-    const result = await pool.query(
-        POSTS_QUERIES.CREATE,
-        [slug, title, author, tags || [], content]
-    );
-    return result.rows[0];
+    try {
+        const result = await pool.query(
+            POSTS_QUERIES.CREATE,
+            [slug, title, author, tags || [], content]
+        );
+        return result.rows[0];
+    } catch (error: any) {
+        if (error.code === '23505') {
+            throw new AppError("Post with this slug already exists", 409);
+        }
+        throw new AppError("Failed to create post", 500);
+    }
 };
 
 /**
@@ -39,10 +51,13 @@ export const createPost = async (post: Post): Promise<Post> => {
  * @param {string} slug - The slug of the post to delete.
  * @return {Promise<Boolean>} A promise that resolves to true if the post was deleted, false otherwise.
  */
-export const deletePost = async (slug: string): Promise<Boolean> => {
+export const deletePost = async (slug: string): Promise<void> => {
     const result = await pool.query(
         POSTS_QUERIES.DELETE_BY_SLUG,
         [slug]
     );
-    return (result.rowCount ?? 0) > 0;
+
+    if (result.rowCount === 0) {
+        throw new AppError("Post not found", 404);
+    }
 };
