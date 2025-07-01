@@ -44,3 +44,32 @@ export const createPost = async (req: Request, res: Response): Promise<void> => 
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
+/**
+ * Delete a post by slug
+ */
+export const deletePost = async (req: Request, res: Response): Promise<void> => {
+    const { slug } = req.params;
+
+    if (!slug) {
+        res.status(400).json({ message: 'Slug is required' });
+        return;
+    }
+
+    try {
+        const result = await pool.query(
+            `DELETE FROM posts WHERE slug = $1 RETURNING *`,
+            [slug]
+        );
+
+        if (result.rowCount === 0) {
+            res.status(404).json({ message: 'Post not found' });
+        } else {
+            res.status(204).send();
+        }
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
