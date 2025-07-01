@@ -35,37 +35,21 @@ services:
     networks:
       - reverse-proxy
 
-  frontend:
-    container_name: meraki-frontend
+  contentmanager:
+    container_name: meraki-contentmanager
     build:
-      context: ./frontend
+      context: ./contentmanager
       dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
+    env_file:
+      - .env
     ports:
-      - "5173:5173"
+      - "80:80"
     restart: unless-stopped
     depends_on:
       backend:
         condition: service_started
     networks:
       - reverse-proxy
-
-  contentmanager:
-    container_name: meraki-content-manager
-    build:
-      context: ./contentmanager
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    expose:
-      - "80"
-    restart: unless-stopped
-    depends_on:
-      backend:
-        condition: service_started
-    networks:
-      - localdev-network
 
 networks:
   reverse-proxy:
