@@ -7,7 +7,10 @@ import { pool } from '../db/pool';
  */
 export const getAllPosts = async (_req: Request, res: Response): Promise<void> => {
     try {
-        const result = await pool.query('SELECT * FROM public.posts');
+        const result = await pool.query(
+            `SELECT * FROM posts
+             ORDER BY created_at DESC`
+        );
         res.status(200).json(result.rows);
     } catch (error) {
         console.error('Error getting posts:', error);
