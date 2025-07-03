@@ -11,7 +11,7 @@ export default function PostCarousel(): JSX.Element {
 
   useEffect(() => {
     async function fetchPosts(): Promise<void> {
-      const apiUrl = import.meta.env.VITE_API_URL;
+      const apiUrl = "http://localhost:3000"; // Replace with your API URL
       try {
         const response = await fetch(`${apiUrl}/posts`);
         if (!response.ok) {

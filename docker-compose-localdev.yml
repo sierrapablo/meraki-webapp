@@ -52,14 +52,14 @@ services:
       - localdev-network
 
   contentmanager:
-    container_name: meraki-content-manager
+    container_name: meraki-contentmanager
     build:
       context: ./contentmanager
       dockerfile: Dockerfile
     env_file:
       - .env
-    expose:
-      - "80"
+    ports:
+      - "80:80"
     restart: unless-stopped
     depends_on:
       backend:
